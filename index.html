@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Legends Reunion</title>
+    <title>Top Secret Mission</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
@@ -10,85 +10,304 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: #111;
-            font-family: Arial, sans-serif;
+            background: #0a0a1a;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            color: white;
         }
-        .scratch-card {
+        .scratch-container {
             width: 90%;
             max-width: 400px;
-            height: 500px;
+            height: 600px;
             position: relative;
-            overflow: hidden;
             border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
         .scratch-overlay {
             position: absolute;
             width: 100%;
             height: 100%;
-            background: repeating-linear-gradient(45deg, #333, #333 10px, #444 10px, #444 20px);
+            background: repeating-linear-gradient(
+                45deg,
+                #222,
+                #222 10px,
+                #333 10px,
+                #333 20px
+            );
             z-index: 2;
-            cursor: grab;
+            cursor: grabbing;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .secret-header {
+            font-size: 2rem;
+            color: #ff4d4d;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
+        }
+        .secret-title {
+            font-size: 3rem;
+            color: #4df9ff;
+            margin: 20px 0;
+            text-shadow: 0 0 10px rgba(77, 249, 255, 0.5);
+        }
+        .warning {
+            font-size: 1rem;
+            color: #ffcc00;
+            margin-top: 30px;
+            font-style: italic;
+        }
+        .progress-bar {
+            width: 80%;
+            height: 10px;
+            background: #333;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #ff4d4d, #4df9ff);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .progress-text {
+            font-size: 1.2rem;
+            color: #4df9ff;
+            margin-bottom: 20px;
         }
         .invitation {
             width: 100%;
             height: 100%;
             background: linear-gradient(135deg, #1a1a2e, #16213e);
-            color: white;
-            padding: 20px;
+            padding: 30px;
             box-sizing: border-box;
+            text-align: center;
             display: none;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .invitation-title {
+            font-size: 3rem;
+            color: #f72585;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(247, 37, 133, 0.5);
+        }
+        .invitation-subtitle {
+            font-size: 1.5rem;
+            color: #4cc9f0;
+            margin: 10px 0;
+        }
+        .invitation-details {
+            font-size: 1.2rem;
+            color: #b8b8ff;
+            margin: 15px 0;
+        }
+        .divider {
+            width: 70%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #f72585, transparent);
+            margin: 20px auto;
+        }
+        .agree-btn {
+            background: linear-gradient(to right, #f72585, #7209b7);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            margin-top: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(247, 37, 133, 0.4);
+            transition: all 0.3s;
+        }
+        .agree-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(247, 37, 133, 0.6);
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f72585;
+            opacity: 0;
+            z-index: 10;
+        }
+        .warning-screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 30px;
+            box-sizing: border-box;
+            z-index: 5;
+        }
+        .warning-title {
+            font-size: 2.5rem;
+            color: #ff4d4d;
+            margin-bottom: 20px;
+        }
+        .warning-text {
+            font-size: 1.2rem;
+            color: #b8b8ff;
+            margin-bottom: 30px;
+            line-height: 1.6;
         }
     </style>
 </head>
 <body>
-    <div class="scratch-card">
-        <div class="scratch-overlay" id="overlay"></div>
-        <div class="invitation" id="invite">
-            <h1>LEGENDS MEET AGAIN!</h1>
-            <p>This Sunday @ 12PM</p>
-            <p>My Place - Bring Snacks!</p>
+    <div class="scratch-container">
+        <!-- Scratch Overlay -->
+        <div class="scratch-overlay" id="scratchOverlay">
+            <div class="secret-header">TOP SECRET MISSION</div>
+            <div class="secret-title">SPILL THE TEA</div>
+            <div class="progress-text">Scratch to reveal: <span id="progressPercent">0%</span></div>
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+            <div class="warning">Secret-sharing zone. Enter wisely.</div>
+        </div>
+        
+        <!-- Warning Screen -->
+        <div class="warning-screen" id="warningScreen">
+            <div class="warning-title">⚠️ WARNING ⚠️</div>
+            <div class="warning-text">
+                By proceeding, you agree to keep all shared information confidential.<br>
+                Any violation will result in permanent removal from future gatherings.
+            </div>
+            <button class="agree-btn" id="agreeBtn">I AGREE</button>
+        </div>
+        
+        <!-- Invitation -->
+        <div class="invitation" id="invitation">
+            <div class="invitation-title">LEGENDS MEET AGAIN</div>
+            <div class="divider"></div>
+            <div class="invitation-subtitle">GIRLS MEETUP</div>
+            <div class="divider"></div>
+            <div class="invitation-details">READY FOR</div>
+            <div class="invitation-details">GOSSIP AND FUN</div>
+            <div class="divider"></div>
+            <div class="invitation-details">THIS SUNDAY,</div>
+            <div class="invitation-details">12 PM ONWARDS</div>
+            <div class="invitation-details">MY HOME</div>
         </div>
     </div>
 
-    <script>
-        const overlay = document.getElementById('overlay');
-        const invite = document.getElementById('invite');
-        let isScratching = false;
+    <!-- Confetti Elements -->
+    <div id="confettiContainer"></div>
 
-        // Mouse events
-        overlay.addEventListener('mousedown', () => isScratching = true);
-        overlay.addEventListener('mouseup', () => isScratching = false);
-        overlay.addEventListener('mouseleave', () => isScratching = false);
+    <script>
+        // DOM Elements
+        const overlay = document.getElementById('scratchOverlay');
+        const warningScreen = document.getElementById('warningScreen');
+        const invitation = document.getElementById('invitation');
+        const agreeBtn = document.getElementById('agreeBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progressPercent = document.getElementById('progressPercent');
+        const confettiContainer = document.getElementById('confettiContainer');
+        
+        // Variables
+        let isScratching = false;
+        let totalScratched = 0;
+        const totalToScratch = 1500; // Adjust for sensitivity
+        let progress = 0;
+        
+        // Create confetti elements
+        for (let i = 0; i < 100; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.top = Math.random() * 100 + '%';
+            confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            confetti.style.width = `${Math.random() * 10 + 5}px`;
+            confetti.style.height = `${Math.random() * 10 + 5}px`;
+            confettiContainer.appendChild(confetti);
+        }
+        const confettiElements = document.querySelectorAll('.confetti');
+        
+        // Mouse Events
+        overlay.addEventListener('mousedown', () => { isScratching = true; });
+        overlay.addEventListener('mouseup', () => { isScratching = false; });
+        overlay.addEventListener('mouseleave', () => { isScratching = false; });
         
         overlay.addEventListener('mousemove', (e) => {
             if (!isScratching) return;
             scratch(e.clientX, e.clientY);
         });
-
-        // Touch events for mobile
-        overlay.addEventListener('touchstart', () => isScratching = true);
-        overlay.addEventListener('touchend', () => isScratching = false);
+        
+        // Touch Events
+        overlay.addEventListener('touchstart', () => { isScratching = true; });
+        overlay.addEventListener('touchend', () => { isScratching = false; });
         overlay.addEventListener('touchmove', (e) => {
+            e.preventDefault();
             if (!isScratching) return;
-            scratch(e.touches[0].clientX, e.touches[0].clientY);
+            const touch = e.touches[0];
+            scratch(touch.clientX, touch.clientY);
         });
-
+        
+        // Agree Button
+        agreeBtn.addEventListener('click', () => {
+            warningScreen.style.display = 'none';
+            invitation.style.display = 'flex';
+        });
+        
+        // Scratch Function
         function scratch(x, y) {
             const rect = overlay.getBoundingClientRect();
+            const xPos = x - rect.left;
+            const yPos = y - rect.top;
+            
+            // Only scratch if within bounds
+            if (xPos < 0 || xPos > rect.width || yPos < 0 || yPos > rect.height) return;
+            
+            // Create scratch mark
             const scratch = document.createElement('div');
             scratch.style.position = 'absolute';
-            scratch.style.left = (x - rect.left - 15) + 'px';
-            scratch.style.top = (y - rect.top - 15) + 'px';
+            scratch.style.left = xPos + 'px';
+            scratch.style.top = yPos + 'px';
             scratch.style.width = '30px';
             scratch.style.height = '30px';
             scratch.style.borderRadius = '50%';
             scratch.style.backgroundColor = 'transparent';
+            scratch.style.pointerEvents = 'none';
             overlay.appendChild(scratch);
-
-            // Show invitation when 50% scratched
-            if (overlay.children.length > 30) {
-                overlay.style.display = 'none';
-                invite.style.display = 'block';
+            
+            // Update progress
+            totalScratched += 30;
+            progress = Math.min(100, Math.floor((totalScratched / totalToScratch) * 100));
+            progressBar.style.width = progress + '%';
+            progressPercent.textContent = progress + '%';
+            
+            // Check if complete
+            if (progress >= 100) {
+                overlay.style.pointerEvents = 'none';
+                
+                // Show confetti animation
+                confettiElements.forEach((c, i) => {
+                    setTimeout(() => {
+                        c.style.opacity = '1';
+                        c.style.transform = `translate(${Math.random() * 400 - 200}px, ${Math.random() * 400 + 100}px) rotate(${Math.random() * 360}deg)`;
+                        c.style.transition = `all ${Math.random() * 3 + 2}s ease-out`;
+                    }, i * 30);
+                });
+                
+                // Show warning screen after animation
+                setTimeout(() => {
+                    warningScreen.style.display = 'flex';
+                }, 1500);
             }
         }
     </script>
