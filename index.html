@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Top Secret Mission</title>
+    <title>Top Secret Girls Meetup</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
@@ -87,35 +87,30 @@
         .invitation {
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
             padding: 30px;
             box-sizing: border-box;
             text-align: center;
             display: none;
             flex-direction: column;
             justify-content: center;
+            color: #6d214f;
+            font-family: 'Brush Script MT', cursive;
         }
         .invitation-title {
-            font-size: 3rem;
-            color: #f72585;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(247, 37, 133, 0.5);
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            color: #d23669;
         }
         .invitation-subtitle {
-            font-size: 1.5rem;
-            color: #4cc9f0;
+            font-size: 2.5rem;
             margin: 10px 0;
+            color: #ff4757;
         }
-        .invitation-details {
-            font-size: 1.2rem;
-            color: #b8b8ff;
+        .invitation-text {
+            font-size: 1.8rem;
             margin: 15px 0;
-        }
-        .divider {
-            width: 70%;
-            height: 2px;
-            background: linear-gradient(to right, transparent, #f72585, transparent);
-            margin: 20px auto;
+            line-height: 1.5;
         }
         .agree-btn {
             background: linear-gradient(to right, #f72585, #7209b7);
@@ -154,6 +149,7 @@
             padding: 30px;
             box-sizing: border-box;
             z-index: 5;
+            color: white;
         }
         .warning-title {
             font-size: 2.5rem;
@@ -165,6 +161,14 @@
             color: #b8b8ff;
             margin-bottom: 30px;
             line-height: 1.6;
+        }
+        .scratch-marker {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: transparent;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -183,26 +187,24 @@
         
         <!-- Warning Screen -->
         <div class="warning-screen" id="warningScreen">
-            <div class="warning-title">⚠️ WARNING ⚠️</div>
+            <div class="warning-title">⚠️ FINAL WARNING ⚠️</div>
             <div class="warning-text">
-                By proceeding, you agree to keep all shared information confidential.<br>
-                Any violation will result in permanent removal from future gatherings.
+                By proceeding, you accept that if you show up with formal vibes or guest energy, 
+                you'll be permanently banned from all future legendary gatherings, gossip, 
+                snacks, and chaos. Forever. 😎🚫🔥
             </div>
-            <button class="agree-btn" id="agreeBtn">I AGREE</button>
+            <button class="agree-btn" id="agreeBtn">I ACCEPT THESE TERMS</button>
         </div>
         
         <!-- Invitation -->
         <div class="invitation" id="invitation">
-            <div class="invitation-title">LEGENDS MEET AGAIN</div>
-            <div class="divider"></div>
-            <div class="invitation-subtitle">GIRLS MEETUP</div>
-            <div class="divider"></div>
-            <div class="invitation-details">READY FOR</div>
-            <div class="invitation-details">GOSSIP AND FUN</div>
-            <div class="divider"></div>
-            <div class="invitation-details">THIS SUNDAY,</div>
-            <div class="invitation-details">12 PM ONWARDS</div>
-            <div class="invitation-details">MY HOME</div>
+            <div class="invitation-title">GIRLS</div>
+            <div class="invitation-subtitle">Meetup</div>
+            <div class="invitation-text">READY FOR</div>
+            <div class="invitation-text">GOSSIP AND FUN</div>
+            <div class="invitation-text">THIS SUNDAY,</div>
+            <div class="invitation-text">12 PM ONWARDS</div>
+            <div class="invitation-text">MY HOME</div>
         </div>
     </div>
 
@@ -273,17 +275,20 @@
             // Only scratch if within bounds
             if (xPos < 0 || xPos > rect.width || yPos < 0 || yPos > rect.height) return;
             
-            // Create scratch mark
-            const scratch = document.createElement('div');
-            scratch.style.position = 'absolute';
-            scratch.style.left = xPos + 'px';
-            scratch.style.top = yPos + 'px';
-            scratch.style.width = '30px';
-            scratch.style.height = '30px';
-            scratch.style.borderRadius = '50%';
-            scratch.style.backgroundColor = 'transparent';
-            scratch.style.pointerEvents = 'none';
-            overlay.appendChild(scratch);
+            // Create scratch marker (visible scratch effect)
+            const scratchMark = document.createElement('div');
+            scratchMark.className = 'scratch-marker';
+            scratchMark.style.left = (xPos - 15) + 'px';
+            scratchMark.style.top = (yPos - 15) + 'px';
+            scratchMark.style.boxShadow = '0 0 0 2px rgba(255,255,255,0.5)';
+            overlay.appendChild(scratchMark);
+            
+            // Remove marker after animation
+            setTimeout(() => {
+                scratchMark.style.boxShadow = '0 0 0 10px rgba(255,255,255,0)';
+                scratchMark.style.transition = 'all 0.5s ease-out';
+                setTimeout(() => scratchMark.remove(), 500);
+            }, 100);
             
             // Update progress
             totalScratched += 30;
