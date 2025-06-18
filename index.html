@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Legends Reunion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #111;
+            font-family: Arial, sans-serif;
+        }
+        .scratch-card {
+            width: 90%;
+            max-width: 400px;
+            height: 500px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+        }
+        .scratch-overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(45deg, #333, #333 10px, #444 10px, #444 20px);
+            z-index: 2;
+            cursor: grab;
+        }
+        .invitation {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            padding: 20px;
+            box-sizing: border-box;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="scratch-card">
+        <div class="scratch-overlay" id="overlay"></div>
+        <div class="invitation" id="invite">
+            <h1>LEGENDS MEET AGAIN!</h1>
+            <p>This Sunday @ 12PM</p>
+            <p>My Place - Bring Snacks!</p>
+        </div>
+    </div>
+
+    <script>
+        const overlay = document.getElementById('overlay');
+        const invite = document.getElementById('invite');
+        let isScratching = false;
+
+        // Mouse events
+        overlay.addEventListener('mousedown', () => isScratching = true);
+        overlay.addEventListener('mouseup', () => isScratching = false);
+        overlay.addEventListener('mouseleave', () => isScratching = false);
+        
+        overlay.addEventListener('mousemove', (e) => {
+            if (!isScratching) return;
+            scratch(e.clientX, e.clientY);
+        });
+
+        // Touch events for mobile
+        overlay.addEventListener('touchstart', () => isScratching = true);
+        overlay.addEventListener('touchend', () => isScratching = false);
+        overlay.addEventListener('touchmove', (e) => {
+            if (!isScratching) return;
+            scratch(e.touches[0].clientX, e.touches[0].clientY);
+        });
+
+        function scratch(x, y) {
+            const rect = overlay.getBoundingClientRect();
+            const scratch = document.createElement('div');
+            scratch.style.position = 'absolute';
+            scratch.style.left = (x - rect.left - 15) + 'px';
+            scratch.style.top = (y - rect.top - 15) + 'px';
+            scratch.style.width = '30px';
+            scratch.style.height = '30px';
+            scratch.style.borderRadius = '50%';
+            scratch.style.backgroundColor = 'transparent';
+            overlay.appendChild(scratch);
+
+            // Show invitation when 50% scratched
+            if (overlay.children.length > 30) {
+                overlay.style.display = 'none';
+                invite.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
